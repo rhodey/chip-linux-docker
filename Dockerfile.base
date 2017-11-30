@@ -1,0 +1,56 @@
+FROM ubuntu:16.04
+
+MAINTAINER rhodey@anhonestefort.org
+
+ARG CC_TOOL=/usr/bin/arm-linux-gnueabihf-
+ENV CC_TOOL=${CC_TOOL}
+
+RUN apt-get update
+RUN apt-get install -y \
+  curl \
+  bc \
+  git \
+  unzip \
+  build-essential \
+  fakeroot \
+  module-init-tools \
+  zlib1g-dev \
+  libncurses5-dev \
+  lzop \
+  gcc-arm-linux-gnueabihf \
+  binutils-arm-linux-gnueabihf
+
+ARG BASE_DIR
+
+ARG KERNEL_DIR=${BASE_DIR}/kernel
+ARG MOD_DIR=${BASE_DIR}/module
+ARG RTL_DIR=${BASE_DIR}/RTL8723BS
+
+ENV KERNEL_DIR=${KERNEL_DIR}
+ENV MOD_DIR=${MOD_DIR}
+ENV RTL_DIR=${RTL_DIR}
+
+RUN mkdir -p ${KERNEL_DIR} && \
+  mkdir ${MOD_DIR} && \
+  mkdir ${RTL_DIR}
+
+WORKDIR ${KERNEL_DIR}
+
+ARG FROM_KERNEL
+ENV FROM_KERNEL=${FROM_KERNEL}
+ARG NEW_KERNEL
+ENV NEW_KERNEL=${NEW_KERNEL}
+
+RUN git clone \
+  --single-branch --depth 1 --branch debian/${FROM_KERNEL} \
+  https://github.com/NextThingCo/CHIP-linux.git .
+
+WORKDIR ${RTL_DIR}
+
+RUN git clone \
+  --single-branch --depth 1 --branch debian \
+  https://github.com/NextThingCo/RTL8723BS .
+
+RUN for i in debian/patches/0*; do  echo $i; patch -p 1 <$i ; done
+
+WORKDIR ${KERNEL_DIR}
