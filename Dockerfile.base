@@ -17,6 +17,7 @@ RUN apt-get install -y \
   zlib1g-dev \
   libncurses5-dev \
   lzop \
+  libssl-dev \
   gcc-arm-linux-gnueabihf \
   binutils-arm-linux-gnueabihf
 
