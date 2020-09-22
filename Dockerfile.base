@@ -44,13 +44,13 @@ ENV NEW_KERNEL=${NEW_KERNEL}
 
 RUN git clone \
   --single-branch --depth 1 --branch debian/${FROM_KERNEL} \
-  https://github.com/NextThingCo/CHIP-linux.git .
+  https://github.com/chip-community/chip-linux.git .
 
 WORKDIR ${RTL_DIR}
 
 RUN git clone \
   --single-branch --depth 1 --branch debian \
-  https://github.com/NextThingCo/RTL8723BS .
+  https://github.com/chip-community/rtl8723bs.git .
 
 RUN for i in debian/patches/0*; do  echo $i; patch -p 1 <$i ; done
 
